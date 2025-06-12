@@ -189,6 +189,27 @@ babyai:
   eval_episode_num: 10
   video_pred_log: false
 
+  encoder: {
+  cnn_keys: 'image',
+  act: 'SiLU',
+  norm: True,
+  cnn_depth: 32,
+  kernel_size: 4,
+  minres: 7,       # 56→28→14→7 after three downsamples
+  mlp_layers: 5,
+  mlp_units: 1024}
+
+  decoder: {cnn_keys: 'image',
+  act: 'SiLU',
+  norm: True,
+  cnn_depth: 32,
+  kernel_size: 4,
+  minres: 7,      # must match encoder’s minres
+  mlp_layers: 5,
+  mlp_units: 1024,
+  image_dist: mse,
+  outscale: 1.0}
+
 debug:
   debug: True
   pretrain: 1

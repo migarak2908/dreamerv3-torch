@@ -458,7 +458,8 @@ class ConvEncoder(nn.Module):
         super(ConvEncoder, self).__init__()
         act = getattr(torch.nn, act)
         h, w, input_ch = input_shape
-        stages = int(np.log2(h) - np.log2(minres))
+        # stages = int(np.log2(h) - np.log2(minres))
+        stages = int(round(np.log2(h / minres)))
         in_dim = input_ch
         out_dim = depth
         layers = []
@@ -513,7 +514,8 @@ class ConvDecoder(nn.Module):
         act = getattr(torch.nn, act)
         self._shape = shape
         self._cnn_sigmoid = cnn_sigmoid
-        layer_num = int(np.log2(shape[1]) - np.log2(minres))
+        # layer_num = int(np.log2(shape[1]) - np.log2(minres))
+        layer_num = int(round(np.log2(shape[1] / minres)))
         self._minres = minres
         out_ch = minres**2 * depth * 2 ** (layer_num - 1)
         self._embed_size = out_ch

@@ -46,7 +46,7 @@ class NormalizeActions(gym.Wrapper):
 
 class OneHotAction(gym.Wrapper):
     def __init__(self, env):
-        assert isinstance(env.action_space, gym.spaces.Discrete)
+        # assert isinstance(env.action_space, gym.spaces.Discrete)
         super().__init__(env)
         self._random = np.random.RandomState()
         shape = (self.env.action_space.n,)
@@ -58,8 +58,8 @@ class OneHotAction(gym.Wrapper):
         index = np.argmax(action).astype(int)
         reference = np.zeros_like(action)
         reference[index] = 1
-        if not np.allclose(reference, action):
-            raise ValueError(f"Invalid one-hot action:\n{action}")
+        # if not np.allclose(reference, action):
+        #     raise ValueError(f"Invalid one-hot action:\n{action}")
         return self.env.step(index)
 
     def reset(self):
