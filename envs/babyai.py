@@ -1,17 +1,14 @@
-import os
-os.environ["MUJOCO_GL"] = "glfw"
-import memory_maze
-
-import gym
+import minigrid
 import numpy as np
+import gymnasium as gym
+from minigrid.wrappers import RGBImgPartialObsWrapper, ImgObsWrapper
+import matplotlib.pyplot as plt
 
-###from tf dreamerv2 code
-
-
-class MemoryMaze:
-    def __init__(self, task, obs_key="image", act_key="action", size=(64, 64), seed=0):
-        # 9x9, 11x11, 13x13 and 15x15 are available
-        self._env = gym.make(f"MemoryMaze-{task}-v0", seed=seed)
+class BabyAI(gym.Env):
+    def __init__(self, task, obs_key="image", act_key="action", size=(64, 64)):
+        self._env = gym.make(f"{task}")
+        self._env = RGBImgPartialObsWrapper(self._env, tile_size=8)
+        self._env = ImgObsWrapper(self._env)
         self._obs_is_dict = hasattr(self._env.observation_space, "spaces")
         self._obs_key = obs_key
         self._act_key = act_key
@@ -30,6 +27,7 @@ class MemoryMaze:
     def observation_space(self):
         if self._obs_is_dict:
             spaces = self._env.observation_space.spaces.copy()
+
         else:
             spaces = {self._obs_key: self._env.observation_space}
         return gym.spaces.Dict(
@@ -41,26 +39,34 @@ class MemoryMaze:
             }
         )
 
+
     @property
     def action_space(self):
         space = self._env.action_space
         space.discrete = True
         return space
 
+
+
     def step(self, action):
-        obs, reward, done, info = self._env.step(action)
+        obs, reward, terminated, truncated, info = self._env.step(action)
         if not self._obs_is_dict:
             obs = {self._obs_key: obs}
         obs["is_first"] = False
-        obs["is_last"] = done
-        obs["is_terminal"] = info.get("is_terminal", False)
+        obs["is_last"] = terminated or truncated
+        obs["is_terminal"] = terminated
+        done = terminated or truncated
         return obs, reward, done, info
 
+
     def reset(self):
-        obs = self._env.reset()
+        obs, info = self._env.reset()
         if not self._obs_is_dict:
             obs = {self._obs_key: obs}
         obs["is_first"] = True
         obs["is_last"] = False
         obs["is_terminal"] = False
         return obs
+
+
+
