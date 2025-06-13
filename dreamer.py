@@ -152,6 +152,12 @@ def make_env(config, mode, id):
         env = babyai.BabyAI(task)
         env = wrappers.OneHotAction(env)
 
+    elif suite == "babyai_instr":
+        import envs.babyai_instr as babyai_instr
+
+        env = babyai_instr.BabyAIInstr(task)
+        env = wrappers.OneHotAction(env)
+
     elif suite == "memorymaze":
         from envs.memorymaze import MemoryMaze
 

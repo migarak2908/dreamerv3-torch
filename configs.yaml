@@ -210,6 +210,41 @@ babyai:
   image_dist: mse,
   outscale: 1.0}
 
+
+babyai_instr:
+  steps: 1e8
+  task: "BabyAI-GoToRedBallGrey-v0"
+  envs: 8
+  action_repeat: 1
+  time_limit: 100
+  size: [ 56, 56 ]
+  prefill: 5000
+  train_ratio: 512
+  eval_every: 2e5
+  eval_episode_num: 10
+  video_pred_log: false
+
+  encoder: {
+  cnn_keys: 'image',
+  act: 'SiLU',
+  norm: True,
+  cnn_depth: 32,
+  kernel_size: 4,
+  minres: 7,       # 56→28→14→7 after three downsamples
+  mlp_layers: 5,
+  mlp_units: 1024}
+
+  decoder: {cnn_keys: 'image',
+  act: 'SiLU',
+  norm: True,
+  cnn_depth: 32,
+  kernel_size: 4,
+  minres: 7,      # must match encoder’s minres
+  mlp_layers: 5,
+  mlp_units: 1024,
+  image_dist: mse,
+  outscale: 1.0}
+
 debug:
   debug: True
   pretrain: 1
